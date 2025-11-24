@@ -41,6 +41,8 @@ import BooksController from '../controllers/booksController.js';
 const routes = express.Router();
 
 routes.get("/books", BooksController.allBooks);
+// Observar a precedência de rotas do Express, caso :id estivesse antes, ele iria parar ali
+routes.get("/books/search", BooksController.getBooksByEditor);
 routes.get("/books/:id", BooksController.findBookById);
 routes.post("/books", BooksController.addNewBook);
 routes.put("/livros/:id", BooksController.updateOneBook);

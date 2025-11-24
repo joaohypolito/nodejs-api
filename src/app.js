@@ -25,6 +25,7 @@ import "dotenv/config";
 import express from "express";
 import mongoConnect from "./config/dbConnect.js";
 import Books from "./models/Books.js";
+import { Authors } from "./models/Authors.js";
 import routes from "./routes/index.js";
 
 // Estabelece conexão com MongoDB
@@ -39,16 +40,40 @@ conexao.on("error", (erro) => {
 conexao.once("open", () => {
     console.log("Conexão ativa no app.");
     seedBaseBooks();
+    seedBaseAuthors();
 })
 
 // Popula o banco com livros iniciais caso esteja vazio
 async function seedBaseBooks() {
     if (await Books.countDocuments() === 0) {
         const livros = [
-            { name: "The Lord of the Rings" },
-            { name: "The Hobbit" }
+            { 
+                name: "The Lord of the Rings",
+                editora: "Martin Claret",
+                preco: 60,
+                paginas: 375,
+            },
+            { 
+                name: "The Hobbit",
+                editora: "Martin Claret",
+                preco: 40,
+                paginas: 215,
+            }
         ];
         await Books.insertMany(livros);
+    }
+}
+
+// Popula o banco com autores iniciais caso esteja vazio
+async function seedBaseAuthors() {
+    if (await Authors.countDocuments() === 0) {
+        const livros = [
+            { 
+                name: "J. R. R. Tolkien",
+                nationality: "South Africa"
+            },
+        ];
+        await Authors.insertMany(livros);
     }
 }
 

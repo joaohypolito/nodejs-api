@@ -36,6 +36,7 @@
  *   para controle de versão de documentos
  */
 import mongoose from 'mongoose';
+import { authorSchema } from './Authors.js';
 
 // Define o schema do documento de livros no MongoDB
 const booksSchema = new mongoose.Schema({
@@ -44,6 +45,7 @@ const booksSchema = new mongoose.Schema({
     editora: { type: String }, // Editora do livro
     preco: { type: Number }, // Preço do livro
     paginas: { type: Number }, // Número de páginas
+    author: authorSchema, // Relacionamento com o model Authors
 }, {versionKey: false}); // Desabilita o campo __v do Mongoose
 
 // Cria e exporta o modelo Books baseado no schema

@@ -30,57 +30,75 @@
  * - deleteOneBook: Remove documento do banco
  */
 import Books from "../models/Books.js"
+import { Authors } from "../models/Authors.js"
 
 class BooksController {
 
-    static async allBooks(req, res) {
-        try {
-            const allBooks = await Books.find({});
-            res.status(200).json(allBooks);
-        } catch (erro) {
-            res.status(500).json({ message: `${erro.message} - Falha na requisição` });
-        }
+  static async allBooks(req, res) {
+    try {
+      const allBooks = await Books.find({});
+      res.status(200).json(allBooks);
+    } catch (erro) {
+      res.status(500).json({ message: `${erro.message} - Falha na requisição` });
     }
+  }
 
-    static async findBookById (req, res) {
-        try {
-          const id = req.params.id;
-          const bookFound = await Books.findById(id);
-          res.status(200).json(bookFound);
-        } catch (erro) {
-          res.status(500).json({ message: `${erro.message} - falha na requisição do livro` });
-        }
-      };
-
-    static async addNewBook(req, res) {
-        try {
-            const newBook = await Books.create(req.body);
-            res.status(201).json({ message: "Livro cadastrado com sucesso", book: newBook });
-        } catch (error) {
-            res.status(500).json({ message: `${error.message} - Não foi possível cadastrar o livro` });
-        }
+  static async findBookById(req, res) {
+    try {
+      const id = req.params.id;
+      const bookFound = await Books.findById(id);
+      res.status(200).json(bookFound);
+    } catch (erro) {
+      res.status(500).json({ message: `${erro.message} - Falha na requisição do livro` });
     }
+  };
 
-    static async updateOneBook (req, res) {
-        try {
-          const id = req.params.id;
-          await Books.findByIdAndUpdate(id, req.body);
-          res.status(200).json({ message: "livro atualizado" });
-        } catch (erro) {
-          res.status(500).json({ message: `${erro.message} - falha na atualização` });
-        }
-      };
+  static async addNewBook(req, res) {
+    const newBook = req.body;
 
-      static async deleteOneBook (req, res) {
-        try {
-          const id = req.params.id;
-          await Books.findByIdAndDelete(id);
-          res.status(200).json({ message: "livro excluído com sucesso" });
-        } catch (erro) {
-          res.status(500).json({ message: `${erro.message} - falha na exclusão` });
-        }
-      };
-      
+    try {
+      const authorFound = await Authors.findById(newBook.author);
+      const fullBook = { ...newBook, author: { ...authorFound._doc } };
+      const bookCreated = await Books.create(fullBook);
+
+      res.status(201).json({ message: "Livro cadastrado com sucesso", book: bookCreated });
+    } catch (error) {
+      res.status(500).json({ message: `${error.message} - Não foi possível cadastrar o livro` });
+    }
+  }
+
+  static async updateOneBook(req, res) {
+    try {
+      const id = req.params.id;
+      await Books.findByIdAndUpdate(id, req.body);
+      res.status(200).json({ message: "livro atualizado" });
+    } catch (erro) {
+      res.status(500).json({ message: `${erro.message} - falha na atualização` });
+    }
+  };
+
+  static async deleteOneBook(req, res) {
+    try {
+      const id = req.params.id;
+      await Books.findByIdAndDelete(id);
+      res.status(200).json({ message: "livro excluído com sucesso" });
+    } catch (erro) {
+      res.status(500).json({ message: `${erro.message} - falha na exclusão` });
+    }
+  };
+
+  static async getBooksByEditor(req, res) {
+    const editor = req.query.editor;
+
+    try {
+      const booksByEditor = await Books.find({ editora: editor});
+
+      res.status(200).json(booksByEditor);
+    } catch (error) {
+      res.status(500).json({ message: `${erro.message} - Falha na requisição` });
+    }
+  }
+
 }
 
 export default BooksController

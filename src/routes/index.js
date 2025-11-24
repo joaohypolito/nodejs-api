@@ -28,6 +28,7 @@
  */
 import express from "express";
 import BooksController from "./booksRoutes.js";
+import AuthorsController from "./authorsRoutes.js";
 
 // Registra todas as rotas da aplicação
 const routes = (app) => {
@@ -35,7 +36,7 @@ const routes = (app) => {
   app.route("/").get((req, res) => res.status(200).send("Curso de Node.js"));
 
   // Middleware para parsing JSON e registro das rotas de livros
-  app.use(express.json(), BooksController);
+  app.use(express.json(), BooksController, AuthorsController);
 };
 
 export default routes;
