@@ -16,5 +16,5 @@ import app from "./src/app.js";
 
 // Inicia o servidor na porta definida nas variáveis de ambiente
 app.listen(process.env.PORT, () => {
-    console.log(`Listening on port ${process.env.PORT}.`)
+    console.log(`Listening on port ${process.env.PORT}.`);
 });

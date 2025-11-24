@@ -95,7 +95,7 @@ class BooksController {
 
       res.status(200).json(booksByEditor);
     } catch (error) {
-      res.status(500).json({ message: `${erro.message} - Falha na requisição` });
+      res.status(500).json({ message: `${error.message} - Falha na requisição` });
     }
   }
 

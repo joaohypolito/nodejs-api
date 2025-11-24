@@ -36,7 +36,11 @@ const routes = (app) => {
   app.route("/").get((req, res) => res.status(200).send("Curso de Node.js"));
 
   // Middleware para parsing JSON e registro das rotas de livros
-  app.use(express.json(), BooksController, AuthorsController);
+  app.use(
+    express.json(), 
+    BooksController, 
+    AuthorsController
+  );
 };
 
 export default routes;
