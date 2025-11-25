@@ -32,11 +32,11 @@ import mongoose, { mongo } from "mongoose";
 // Estabelece conexão com o banco de dados MongoDB
 // Retorna a instância da conexão para gerenciamento de eventos
 async function mongoConnect() {
-    mongoose.connect(process.env.DB_CONNECTION_STRING, {})
-        .then(() => console.log('Banco de dados conectado com sucesso!'))
-        .catch(err => console.error('Erro ao conectar ao MongoDB:', err));
+  mongoose.connect(process.env.DB_CONNECTION_STRING, {})
+    .then(() => console.log("Banco de dados conectado com sucesso!"))
+    .catch(err => console.error("Erro ao conectar ao MongoDB:", err));
     
-        return mongoose.connection;
+  return mongoose.connection;
 };
 
 export default mongoConnect;

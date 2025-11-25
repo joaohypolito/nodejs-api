@@ -29,76 +29,81 @@
  * - updateOneBook: Atualiza documento existente
  * - deleteOneBook: Remove documento do banco
  */
-import Books from "../models/Books.js"
-import { Authors } from "../models/Authors.js"
+import Books from "../models/Books.js";
 
 class BooksController {
 
-  static async allBooks(req, res) {
+  static async allBooks(req, res, next) {
     try {
-      const allBooks = await Books.find({});
+      const allBooks = await Books.find()
+        .populate("author")
+        .exec();
+
       res.status(200).json(allBooks);
     } catch (erro) {
-      res.status(500).json({ message: `${erro.message} - Falha na requisição` });
+      next(erro);
     }
   }
 
-  static async findBookById(req, res) {
+  static async findBookById(req, res, next) {
     try {
       const id = req.params.id;
       const bookFound = await Books.findById(id);
+
       res.status(200).json(bookFound);
     } catch (erro) {
-      res.status(500).json({ message: `${erro.message} - Falha na requisição do livro` });
+      next(erro);
     }
   };
 
-  static async addNewBook(req, res) {
-    const newBook = req.body;
-
+  static async addNewBook(req, res, next) {
     try {
-      const authorFound = await Authors.findById(newBook.author);
-      const fullBook = { ...newBook, author: { ...authorFound._doc } };
-      const bookCreated = await Books.create(fullBook);
+      let newBook = new Books(req.body);
 
-      res.status(201).json({ message: "Livro cadastrado com sucesso", book: bookCreated });
-    } catch (error) {
-      res.status(500).json({ message: `${error.message} - Não foi possível cadastrar o livro` });
+      const res = await newBook.save();
+
+      // const authorFound = await Authors.findById(newBook.author);
+      // const fullBook = { ...newBook, author: { ...authorFound._doc } };
+      // const bookCreated = await Books.create(fullBook);
+
+      res.status(201).send(res.toJSON());
+    } catch (erro) {
+      next(erro);
     }
   }
 
-  static async updateOneBook(req, res) {
+  static async updateOneBook(req, res, next) {
     try {
       const id = req.params.id;
       await Books.findByIdAndUpdate(id, req.body);
       res.status(200).json({ message: "livro atualizado" });
     } catch (erro) {
-      res.status(500).json({ message: `${erro.message} - falha na atualização` });
+      next(erro);
     }
   };
 
-  static async deleteOneBook(req, res) {
+  static async deleteOneBook(req, res, next) {
     try {
       const id = req.params.id;
       await Books.findByIdAndDelete(id);
       res.status(200).json({ message: "livro excluído com sucesso" });
     } catch (erro) {
-      res.status(500).json({ message: `${erro.message} - falha na exclusão` });
+      next(erro);
     }
   };
 
-  static async getBooksByEditor(req, res) {
+  static async getBooksByEditor(req, res, next) {
     const editor = req.query.editor;
 
     try {
       const booksByEditor = await Books.find({ editora: editor});
 
       res.status(200).json(booksByEditor);
-    } catch (error) {
-      res.status(500).json({ message: `${error.message} - Falha na requisição` });
+    } catch (erro) {
+      next(erro);
     }
   }
 
 }
 
-export default BooksController
+export default BooksController;

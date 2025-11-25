@@ -35,20 +35,34 @@
  * - versionKey: false - Remove o campo __v que o Mongoose adiciona por padrão
  *   para controle de versão de documentos
  */
-import mongoose from 'mongoose';
-import { authorSchema } from './Authors.js';
+import mongoose from "mongoose";
 
 // Define o schema do documento de livros no MongoDB
 const booksSchema = new mongoose.Schema({
-    id: { type: mongoose.Schema.Types.ObjectId },
-    name: { type: String, required: true }, // Nome do livro (obrigatório)
-    editora: { type: String }, // Editora do livro
-    preco: { type: Number }, // Preço do livro
-    paginas: { type: Number }, // Número de páginas
-    author: authorSchema, // Relacionamento com o model Authors
+  id: { type: mongoose.Schema.Types.ObjectId },
+  name: { 
+    type: String, 
+    required: [true, "O título do livro é obrigatório."]
+  },
+  editora: { 
+    type: String,
+    required: [true, "A editora é obrigatória."] 
+  },
+  preco: { type: Number },
+  paginas: { 
+    type: Number,
+    min: [10, "O número de páginas deve estar entre 10 e 5000. Valor fornecido {VALUE}"],
+    max: [5000, "O número de páginas deve estar entre 10 e 5000. Valor fornecido {VALUE}"]
+  },
+  // O campo abaixo armazena apenas o ObjectId e referencia o model Authors
+  author: {
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "authors",
+    required: [true, "O(A) autor(a) é obrigatório"]
+  },
 }, {versionKey: false}); // Desabilita o campo __v do Mongoose
 
 // Cria e exporta o modelo Books baseado no schema
-const Books = mongoose.model('books', booksSchema);
+const Books = mongoose.model("books", booksSchema);
 
 export default Books;

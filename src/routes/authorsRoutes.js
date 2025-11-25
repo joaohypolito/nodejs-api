@@ -3,8 +3,8 @@
  * Mantém o padrão Routes -> Controller -> Model utilizado no restante
  * da aplicação.
  */
-import express from 'express';
-import AuthorsController from '../controllers/authorsController.js';
+import express from "express";
+import AuthorsController from "../controllers/authorsController.js";
 
 const routes = express.Router();
 

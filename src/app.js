@@ -27,65 +27,69 @@ import mongoConnect from "./config/dbConnect.js";
 import Books from "./models/Books.js";
 import { Authors } from "./models/Authors.js";
 import routes from "./routes/index.js";
+import errorsHandler from "./middlewares/errorsHandler.js";
+import notFound404 from "./middlewares/notFound404.js";
 
 // Estabelece conexão com MongoDB
 const conexao = await mongoConnect();
 
 // Tratamento de erros de conexão
 conexao.on("error", (erro) => {
-    console.error("Erro de conexão", erro);
+  console.error("Erro de conexão", erro);
 });
 
 // Executa seed de dados quando a conexão é estabelecida
 conexao.once("open", () => {
-    console.log("Conexão ativa no app.");
-    seedBaseBooks();
-    seedBaseAuthors();
-})
+  console.log("Conexão ativa no app.");
+  seedBaseAuthors();
+  seedBaseBooks();
+});
 
 // Popula o banco com livros iniciais caso esteja vazio
 async function seedBaseBooks() {
-    if (await Books.countDocuments() === 0) {
-        const livros = [
-            { 
-                name: "The Lord of the Rings",
-                editora: "Martin Claret",
-                preco: 60,
-                paginas: 375,
-            },
-            { 
-                name: "The Hobbit",
-                editora: "Martin Claret",
-                preco: 40,
-                paginas: 215,
-            }
-        ];
-        await Books.insertMany(livros);
-    }
+  if (await Books.countDocuments() === 0) {
+    const livros = [
+      {
+        name: "The Lord of the Rings",
+        editora: "Martin Claret",
+        preco: 60,
+        paginas: 375,
+        author: "6924965fcd126014154e0989"
+      },
+      {
+        name: "The Hobbit",
+        editora: "Martin Claret",
+        preco: 40,
+        paginas: 215,
+        author: "6924965fcd126014154e0989"
+      }
+    ];
+    await Books.insertMany(livros);
+  }
 }
 
 // Popula o banco com autores iniciais caso esteja vazio
 async function seedBaseAuthors() {
-    if (await Authors.countDocuments() === 0) {
-        const livros = [
-            { 
-                name: "J. R. R. Tolkien",
-                nationality: "South Africa"
-            },
-        ];
-        await Authors.insertMany(livros);
-    }
+  if (await Authors.countDocuments() === 0) {
+    const livros = [
+      {
+        name: "J. R. R. Tolkien",
+        nationality: "South Africa"
+      }
+    ];
+    await Authors.insertMany(livros);
+  }
 }
 
 // Inicializa aplicação Express e registra rotas
+// A ordem de registro dos middlewares importa, reflete na ordem de execução
 const app = express();
+app.use(express.json());
 routes(app);
 
-// Rota de exclusão (legado - deve ser movida para o controller)
-app.delete("/books/:id", (req, res) => {
-  const index = findBookById(req.params.id);
-  Books.splice(index, 1);
-  res.status(200).send("Livro removido com sucesso");
-});
+app.use(notFound404);
+
+// Middleware de erro - Centraliza e izntercepta erros lançados pela aplicação
+app.use(errorsHandler);
 
 export default app;

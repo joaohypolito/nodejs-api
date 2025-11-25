@@ -34,8 +34,8 @@
  * Todas as rotas são tratadas por métodos estáticos da classe BooksController,
  * que encapsula a lógica de negócio e acesso ao banco de dados.
  */
-import express from 'express';
-import BooksController from '../controllers/booksController.js';
+import express from "express";
+import BooksController from "../controllers/booksController.js";
 
 // Cria um router do Express para agrupar rotas relacionadas
 const routes = express.Router();
