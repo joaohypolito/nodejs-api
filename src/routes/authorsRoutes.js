@@ -5,10 +5,11 @@
  */
 import express from "express";
 import AuthorsController from "../controllers/authorsController.js";
+import pagination from "../middlewares/pagination.js";
 
 const routes = express.Router();
 
-routes.get("/authors", AuthorsController.allAuthors);
+routes.get("/authors", AuthorsController.allAuthors, pagination);
 routes.get("/authors/:id", AuthorsController.findAuthorById);
 routes.post("/authors", AuthorsController.addNewAuthor);
 routes.put("/authors/:id", AuthorsController.updateOneAuthor);

@@ -36,13 +36,14 @@
  */
 import express from "express";
 import BooksController from "../controllers/booksController.js";
+import pagination from "../middlewares/pagination.js";
 
 // Cria um router do Express para agrupar rotas relacionadas
 const routes = express.Router();
 
-routes.get("/books", BooksController.allBooks);
+routes.get("/books", BooksController.allBooks, pagination);
 // Observar a precedência de rotas do Express, caso :id estivesse antes, ele iria parar ali
-routes.get("/books/search", BooksController.getBooksByEditor);
+routes.get("/books/search", BooksController.filterBooks, pagination);
 routes.get("/books/:id", BooksController.findBookById);
 routes.post("/books", BooksController.addNewBook);
 routes.put("/livros/:id", BooksController.updateOneBook);

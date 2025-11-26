@@ -29,17 +29,18 @@
  * - updateOneBook: Atualiza documento existente
  * - deleteOneBook: Remove documento do banco
  */
-import Books from "../models/Books.js";
+import { Books } from "../models/index.js";
+import { Authors } from "../models/index.js";
 
 class BooksController {
 
   static async allBooks(req, res, next) {
     try {
-      const allBooks = await Books.find()
-        .populate("author")
-        .exec();
+      const searchBooks = Books.find();
 
-      res.status(200).json(allBooks);
+      req.result = searchBooks;
+
+      next();
     } catch (erro) {
       next(erro);
     }
@@ -48,7 +49,13 @@ class BooksController {
   static async findBookById(req, res, next) {
     try {
       const id = req.params.id;
-      const bookFound = await Books.findById(id);
+      const bookFound = await Books
+        .findById(
+          id,
+          {},
+          { autopopulate: false }
+        )
+        .populate("author");
 
       res.status(200).json(bookFound);
     } catch (erro) {
@@ -92,18 +99,55 @@ class BooksController {
     }
   };
 
-  static async getBooksByEditor(req, res, next) {
-    const editor = req.query.editor;
-
+  static async filterBooks(req, res, next) {
     try {
-      const booksByEditor = await Books.find({ editora: editor});
+      const searchFilter = await procesSearch(req.query);
 
-      res.status(200).json(booksByEditor);
+      if (searchFilter !== null) {
+        const booksFound = Books
+          .find(searchFilter);
+
+        req.result = booksFound;
+
+        next();
+      } else {
+        res.status(200).send([]);
+      }
     } catch (erro) {
       next(erro);
     }
   }
 
+}
+
+async function procesSearch(q) {
+  const { editora, name, minPages, maxPages, author } = q;
+
+  // Exemplo de uso de regex do js, bastaria atribuir o valor dele no search.name
+  // const regex = new RegExp(name, "i");
+
+  let qParams = {};
+
+  if (editora) qParams.editora = editora;
+
+  if (name) qParams.name = { $regex: name, $options: "i" }; // Regex do mongoDB
+
+  // TODO: Tratar min de páginas maior que max páginas e vice versa
+  if (minPages || maxPages) qParams.paginas = {};
+  if (minPages) qParams.paginas.$gte = minPages;
+  if (maxPages) qParams.paginas.$lte = maxPages;
+
+  if (author) {
+    const name = await Authors.findOne({ name: author });
+
+    if (name !== null) {
+      qParams.author = name._id;
+    } else {
+      qParams = null;
+    }
+  };
+
+  return qParams;
 }
 
 export default BooksController;

@@ -4,14 +4,17 @@
  * e centralizando o acesso ao MongoDB.
  */
 import NotFound from "../errors/notFound.js";
-import { Authors } from "../models/Authors.js";
+import { Authors } from "../models/index.js";
 
 class AuthorsController {
 
   static async allAuthors(req, res, next) {
     try {
-      const authors = await Authors.find({});
-      res.status(200).json(authors);
+      const authors = Authors.find();
+
+      req.result = authors;
+
+      next();
     } catch (erro) {
       next(erro);
     }

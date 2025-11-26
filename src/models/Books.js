@@ -36,6 +36,7 @@
  *   para controle de versão de documentos
  */
 import mongoose from "mongoose";
+import autopopulate from "mongoose-autopopulate";
 
 // Define o schema do documento de livros no MongoDB
 const booksSchema = new mongoose.Schema({
@@ -58,9 +59,12 @@ const booksSchema = new mongoose.Schema({
   author: {
     type: mongoose.Schema.Types.ObjectId, 
     ref: "authors",
-    required: [true, "O(A) autor(a) é obrigatório"]
+    required: [true, "O(A) autor(a) é obrigatório"],
+    autopopulate: true
   },
 }, {versionKey: false}); // Desabilita o campo __v do Mongoose
+
+booksSchema.plugin(autopopulate);
 
 // Cria e exporta o modelo Books baseado no schema
 const Books = mongoose.model("books", booksSchema);
