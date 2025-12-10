@@ -44,8 +44,6 @@ DB_CONNECTION_STRING=mongodb://localhost:27017/alurabooks
 - `PORT` - Porta em que o servidor irá rodar (padrão: 3000)
 - `DB_CONNECTION_STRING` - String de conexão com o MongoDB
   - Formato: `mongodb://[usuário:senha@]host[:porta]/[database]`
-  - Exemplo local: `mongodb://localhost:XXXXX/alurabooks`
-  - Exemplo remoto: `mongodb+srv://usuario:senha@cluster.mongodb.net/alurabooks`
 
 ## ▶️ Como Executar
 
